@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main/lety.css' %}">
+    {% block style %}{% endblock %}
+
+    <title> {% block title %}Aktivni lety{% endblock %}</title>
+</head>
+<body>
+
+    <!-- <div class="navbar">
+        <div class="casomira-logo">
+            <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
+        </div>
+    </div> -->
+
+    <div class="main-container">
+
+        <div class="sidebar">
+            <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
+            <a class="menu-btn" href='{% url "main:lety" %}'>Aktivní lety</a>
+            <a class="menu-btn" href='{% url "main:ukoncene_lety" %}'>Ukončené lety</a>
+            <a class="menu-btn" href="#">Ukončit provoz</a>
+        </div>
+
+        <div class="main-window">
+            <div class="header">
+                <h1>{% block name %}AKTIVNÍ LETY{% endblock %}</h1>
+            </div>
+
+            <div class="content">
+                <div class="content-aktivni-lety">
+                {% block content %}
+                <ul class="list-aktivni list-header">
+                    <li  class="let-aktivni let-header">
+                        <p>Letadlo</p>
+                        <p>Žák</p>
+                        <p>Kapitán</p>
+                        <p>Čas vzletů</p>
+                       <a class='pristal-btn deactivate-btn' href="#"></a>
+                    </li>
+                    {% for let in lety_list %}
+                    {% if let.landing == null and let.takeoff != null %}
+                    <li  class="let-aktivni">
+                        <p>{{let.aircraft}}</p>
+                        <p> {{let.student.last_name}}</p>
+                        <p> {{let.captain.last_name}}</p>
+                        <p> {{let.takeoff.time}}</p>
+                        <a class='pristal-btn' href="#">PŘISTAL</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                {% endblock %}
+
+                </div>
+
+                <button class="pridat-btn">Přidat let +</button>
+
+                <div class="container-pridat">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+        
+
+    
+</body>
+</html>

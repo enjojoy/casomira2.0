@@ -1,0 +1,31 @@
+{% extends "./base.html" %}
+
+{% load static %}
+
+{% block style %}<link rel="stylesheet" href="{% static 'main/ukoncene.css' %}">{% endblock style %}
+
+{% block name %}UKONČENÉ LETY{% endblock name %}
+
+{% block content %} 
+<ul class="list-aktivni list-header">
+    <li  class="let-aktivni let-header">
+        <p>Letadlo</p>
+        <p>Žák</p>
+        <p>Kapitán</p>
+        <p>Čas vzletů</p>
+        <p>Čas přistání</p>
+    </li>
+    {% for let in lety_list %}
+    {% if let.landing != null %}
+    <li  class="let-aktivni">
+        <p>{{let.aircraft}}</p>
+        <p> {{let.student.last_name}}</p>
+        <p> {{let.captain.last_name}}</p>
+        <p> {{let.takeoff.time}}</p>
+        <p> {{let.lsnding.time}}</p>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+{% endblock content%}
