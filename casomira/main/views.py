@@ -24,24 +24,22 @@ def zapis(request):
     print(person_list)
 
 
-    # if request.method == 'POST':
-    #     person_choosen = request.POST.getlist('person_choosen')
-    #     aircraft_choosen = request.POST.getlist('aircraft_choosen')
+    if request.method == 'POST':
+        person_choosen = request.POST.getlist('person_choosen')
+        aircraft_choosen = request.POST.getlist('aircraft_choosen')
+        print(person_choosen)
+        print(aircraft_choosen)
 
+        for person_ch in person_choosen:
+            person = Person.objects.get(id=int(person_ch))
+            person.active = 'True'
+            person.save()
 
-    #     if len(person_choosen)<2 or len(aircraft_choosen)<1:
-    #         pass
-    #     else:
-    #         for person_ch in person_choosen:
-    #             person = Person.objects.get(id=int(person_ch))
-    #             person.active = 'True'
-    #             person.save()
-
-    #         for aircraft_ch in aircraft_choosen:
-    #             aircraft = Aircraft.objects.get(id=int(aircraft_ch))
-    #             aircraft.active = 'True'
-    #             aircraft.save()
-    #         return HttpResponseRedirect('lety')
+        for aircraft_ch in aircraft_choosen:
+            aircraft = Aircraft.objects.get(id=int(aircraft_ch))
+            aircraft.active = 'True'
+            aircraft.save()
+        return redirect("main:lety")
 
     return render(request, 'main/zapis.html', context )
 

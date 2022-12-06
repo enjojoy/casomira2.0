@@ -79,10 +79,8 @@ function zapis(event){
             if(error.classList.contains('active')){
                 error.classList.remove('active')
                 console.log("Congrats it works")
-                event.preventDefault();
             }else{
                 console.log("Congrats it works")
-                event.preventDefault();
             }
         }
 }
