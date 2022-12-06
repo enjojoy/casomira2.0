@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="{% static 'main/zapis.css' %}">
 </head>
-<body>
+<body onload="onLoad()">
     <div class="navbar">
         <div class="casomira-logo">
             <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
@@ -29,20 +29,11 @@
         {% csrf_token %}
         <div class="vyber-container">
             <div class="person-container">
-                <!-- {% if person_list %}
-                <select name="langOpt[]" id="personOpt" multiple data-mdb-placeholder="Choose a person" multiple >
-                    {% for person in person_list %}
-                    <option value="{{person.id}}" name="person_choosen">{{person.first_name}} {{person.last_name}}</option>
-                    {% endfor %}
-                </select>
-                {% else %}
-                <h2>No people are available</h2>
-                {% endif %} -->
 
                 {% if person_list %}
                     {% for person in person_list %}
                     <div class="choice-container">
-                    <input type="checkbox" value="{{person.id}}" name="person_choosen" id="person">
+                    <input type="checkbox" value="{{person.id}}" name="person_choosen" id="person:{{person.id}}" class="person">
                     <label for='person'>{{person.first_name}} {{person.last_name}}</label>
                     </div>
                     {% endfor %}
@@ -53,20 +44,11 @@
             </div>
 
             <div class="aircraft-container">
-                <!-- {% if aircraft_list %}
-                <select name="langOpt1[]" multiple id="aircraftOpt">
-                    {% for aircraft in aircraft_list %}
-                    <option value="{{aircraft.id}}">{{aircraft.registration}}</option>
-                    {% endfor %}
-                </select>
-                {% else %}
-                <h2>No aircrafts are available</h2>
-                {% endif %} -->
 
                 {% if aircraft_list %}
                     {% for aircraft in aircraft_list %}
                     <div class="choice-container">
-                    <input type="checkbox" value="{{aircraft.id}}" id="aircraft" name="aircraft_choosen">
+                    <input type="checkbox" value="{{aircraft.id}}" id="aircraft:{{aircraft.id}}" name="aircraft_choosen" class="aircraft" >
                     <label for="aircraft">{{aircraft.registration}}</label>
                     </div>
                     {% endfor %}
@@ -85,11 +67,13 @@
         </div>
         
         <div class="btn-container">
-            <button class="btn-zapis" id="zapis-btn" name="potvrdit_zapis" value="potvrdit_zapis">
+            <button type="submit" class="btn-zapis" id="zapis-btn" name="potvrdit_zapis" value="potvrdit_zapis">
                 Potvrdit zapis
             </button>
         </div>
         </form>
+
+
             
     </div>
 
