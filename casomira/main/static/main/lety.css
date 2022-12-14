@@ -247,7 +247,6 @@ select{
 }
 
 .vlecna-let{
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -261,6 +260,14 @@ select{
     position: absolute;
     opacity: 0;
     bottom: 0;
+}
+
+.vlecna-hidden .choice{
+    pointer-events: none;
+}
+
+.vlecna-smazat{
+    background-color: #AAAAAA;
 }
 
 

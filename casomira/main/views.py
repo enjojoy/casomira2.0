@@ -54,7 +54,6 @@ def lety(request):
     
 
     if request.method=="POST" and 'potvrdit_vzlet' in request.POST:
-        print('helo')
         aircraft=request.POST.get('aircraft')
         student=request.POST.get('student')
         capitan=request.POST.get('capitan')
@@ -66,13 +65,11 @@ def lety(request):
         aircraft_bow=request.POST.get('aircraft_bow')
         capitan_bow=request.POST.get('capitan_bow')
         if aircraft_bow == None:
-            print('i passed')
             pass
         else:
             new_flight_bow = Flight(date=timestamp_date, aircraft_id=aircraft_bow, captain_id=capitan_bow, takeoff=timestamp)
             new_flight_bow.save()
         return redirect('main:lety')
-        print(aircraft, student, capitan, timestamp)
 
     if request.method=="POST" and 'pristal' in request.POST:
         flight_to_end=request.POST.get('pristal')

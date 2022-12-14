@@ -14,16 +14,22 @@
         <p>Kapitán</p>
         <p>Čas vzletů</p>
         <p>Čas přistání</p>
+        <button class="edit-flight disabled" disabled>Edit</button>
     </li>
     {% for let in lety_list %}
-    <li  class="let-aktivni">
+    <li  class="let-aktivni" id="flight" value="{{let.id}}">
         <p>{{let.aircraft}}</p>
         <p> {{let.student.last_name}}</p>
         <p> {{let.captain.last_name}}</p>
         <p> {{let.takeoff.time}}</p>
         <p> {{let.landing.time}}</p>
+        <button class="edit-flight" id="edit-flight" value="{{let.id}}">Edit</button>
     </li>
     {% endfor %}
 </ul>
 
 {% endblock content%}
+
+{% block script %}
+<script src="{% static 'main/ukoncene.js' %}"></script>
+{% endblock script %}

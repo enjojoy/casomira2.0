@@ -124,6 +124,15 @@
                             {% endfor %}
                         </select>
                         </div>
+                        
+                        <a class='vlecna-btn vlecna-smazat' id="vlecna-smazat">-</a>
+                        
+                        <div class="choice hidden">
+                        <select name="no" id="no">
+                            <option selected disabled hidden>For syling</option>
+                        </select>
+                        </div>
+
                 </div>
                 <button type='submit' class="pridat-btn potvrdit-btn" id="potvrdit-btn" name="potvrdit_vzlet" value="potvrdit_vzlet">
                     Potvrdit vzlet
@@ -140,6 +149,8 @@
 
         
 <script src="{% static 'main/lety.js' %}"></script>
+{% block script %}
+{% endblock script %}
     
 </body>
 </html>
