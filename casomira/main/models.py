@@ -24,7 +24,7 @@ class Flight(models.Model):
     date = models.DateTimeField('date of provoz')
     takeoff = models.DateTimeField('takeoff', default = None, null=True, blank=True)
     landing = models.DateTimeField('landing', default = None, null=True, blank=True)
-    student = models.ForeignKey(Person, on_delete = models.RESTRICT, related_name = 'student', null=True, default="X")
+    student = models.ForeignKey(Person, on_delete = models.RESTRICT, related_name = 'student', null=True, default=None)
     captain = models.ForeignKey(Person, on_delete = models.RESTRICT, related_name = 'captain', null=True)
     aircraft = models.ForeignKey(Aircraft, on_delete = models.RESTRICT, related_name = 'letadlo', null=True)
     

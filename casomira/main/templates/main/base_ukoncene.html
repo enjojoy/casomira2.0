@@ -16,15 +16,13 @@
         <p>Čas přistání</p>
     </li>
     {% for let in lety_list %}
-    {% if let.landing != null %}
     <li  class="let-aktivni">
         <p>{{let.aircraft}}</p>
         <p> {{let.student.last_name}}</p>
         <p> {{let.captain.last_name}}</p>
         <p> {{let.takeoff.time}}</p>
-        <p> {{let.lsnding.time}}</p>
+        <p> {{let.landing.time}}</p>
     </li>
-    {% endif %}
     {% endfor %}
 </ul>
 

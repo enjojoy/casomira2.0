@@ -3,11 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import Person, Aircraft, Flight
 from django import forms
 from django.shortcuts import redirect
+from datetime import datetime, timezone
 from datetime import date
-import datetime
 
-# from django.utils.timezone import datetime
-# Create your views here.
 
 def index(request):
     return render(request, 'main/index.html')
@@ -21,14 +19,11 @@ def zapis(request):
         'aircraft_list' : aircraft_list,
     }
 
-    print(person_list)
-
 
     if request.method == 'POST':
         person_choosen = request.POST.getlist('person_choosen')
         aircraft_choosen = request.POST.getlist('aircraft_choosen')
-        print(person_choosen)
-        print(aircraft_choosen)
+
 
         for person_ch in person_choosen:
             person = Person.objects.get(id=int(person_ch))
@@ -45,21 +40,62 @@ def zapis(request):
 
 
 def lety(request):
-    # today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
-    # today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
-    # flight_list = Flight.objects.filter(date__range=(today_min, today_max))
-    # print(flight_list)
+
     lety_list = Flight.objects.order_by('takeoff')
+
+    person_active_list = Person.objects.order_by('id').filter(active=True)
+    aircraft_active_list = Aircraft.objects.order_by('id').filter(active=True)
+
     context = {
         'lety_list': lety_list,
+        'person_active_list': person_active_list,
+        'aircraft_active_list': aircraft_active_list,
     }
-    # print(lety_list)
+    
+
+    if request.method=="POST" and 'potvrdit_vzlet' in request.POST:
+        print('helo')
+        aircraft=request.POST.get('aircraft')
+        student=request.POST.get('student')
+        capitan=request.POST.get('capitan')
+        timestamp = datetime.now(timezone.utc)
+        timestamp_date=datetime.today().date()
+        new_flight = Flight(date=timestamp_date, aircraft_id=aircraft, captain_id=capitan, student_id=student, takeoff=timestamp)
+        new_flight.save()
+        
+        aircraft_bow=request.POST.get('aircraft_bow')
+        capitan_bow=request.POST.get('capitan_bow')
+        if aircraft_bow == None:
+            print('i passed')
+            pass
+        else:
+            new_flight_bow = Flight(date=timestamp_date, aircraft_id=aircraft_bow, captain_id=capitan_bow, takeoff=timestamp)
+            new_flight_bow.save()
+        return redirect('main:lety')
+        print(aircraft, student, capitan, timestamp)
+
+    if request.method=="POST" and 'pristal' in request.POST:
+        flight_to_end=request.POST.get('pristal')
+        flight = Flight.objects.get(id=flight_to_end)
+        timestamp1 = datetime.now(timezone.utc)
+        flight.landing=timestamp1
+        flight.save()
+
     return render(request, 'main/base.html', context)
 
 
 
+
+
 def ukoncene_lety(request):
-    return render(request, 'main/base_ukoncene.html')
+    lety_list = Flight.objects.order_by('id').exclude(landing__isnull = True)
+
+    context = {
+        'lety_list': lety_list,
+    }
+    print(lety_list)
+
+    return render(request, 'main/base_ukoncene.html', context)
 
 
 

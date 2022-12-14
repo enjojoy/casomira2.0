@@ -67,11 +67,11 @@ function zapis(event){
 
         if ( p.length < 2  || a.length < 1){
             if(error.classList.contains('active')){
-                console.log("The requirement is not met!")
+                console.log("The requirement is not met!");
                 event.preventDefault();
                 } else{
-                    error.classList.add('active')
-                    console.log("The requirement is not met!")
+                    error.classList.add('active');
+                    console.log("The requirement is not met!");
                     event.preventDefault();
             }
         // }if(person_choosen.length >= 2  && aircraft_choosen.length >= 1){
@@ -79,8 +79,10 @@ function zapis(event){
             if(error.classList.contains('active')){
                 error.classList.remove('active')
                 console.log("Congrats it works")
+
             }else{
                 console.log("Congrats it works")
+
             }
         }
 }
