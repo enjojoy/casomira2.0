@@ -1,15 +1,17 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'main/lety.css' %}">
+    <link rel="stylesheet" href="{% static 'main/flights.css' %}">
     {% block style %}{% endblock %}
 
     <title> {% block title %}Aktivni lety{% endblock %}</title>
 </head>
+
 <body>
 
     <!-- <div class="navbar">
@@ -22,10 +24,12 @@
 
         <div class="sidebar">
             <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
-            <a class="menu-btn" href='{% url "main:lety" %}'>Aktivní lety</a>
-            <a class="menu-btn" href='{% url "main:ukoncene_lety" %}'>Ukončené lety</a>
-            <a class="menu-btn" href="#">Ukončit provoz</a>
+            <a class="menu-btn" href='{% url "main:flights" %}'>Aktivní lety</a>
+            <a class="menu-btn" href='{% url "main:finished_flights" %}'>Ukončené lety</a>
+            <a class="menu-btn" href='{% url "main:end_day" %}'>Ukončit provoz</a>
         </div>
+
+        {%block main_content%}
 
         <div class="main-window">
             <div class="header">
@@ -36,24 +40,25 @@
             <div class="content">
                 <div class="content-aktivni-lety">
                     <ul class="list-aktivni list-header">
-                        <li  class="let-aktivni let-header">
+                        <li class="let-aktivni let-header">
                             <p>Letadlo</p>
                             <p>Žák</p>
                             <p>Kapitán</p>
                             <p>Čas vzletů</p>
-                        <a class='pristal-btn deactivate-btn' href="#"></a>
+                            <a class='pristal-btn deactivate-btn' href="#"></a>
                         </li>
-                        {% for let in lety_list %}
-                        {% if let.landing == null and let.takeoff != null %}
+                        {% for f in flights_list %}
+                        {% if f.landing == null and f.takeoff != null %}
                         <form method="post">
-                        {% csrf_token %}
-                        <li  class="let-aktivni">
-                            <p>{{let.aircraft}}</p>
-                            <p> {{let.student.last_name}}</p>
-                            <p> {{let.captain.last_name}}</p>
-                            <p> {{let.takeoff.time}}</p>
-                            <button type='submit' class='pristal-btn' name="pristal" id="pristal-btn" value="{{let.id}}">PŘISTAL</button>
-                        </li>
+                            {% csrf_token %}
+                            <li class="let-aktivni">
+                                <p>{{f.aircraft}}</p>
+                                <p> {{f.student.last_name}}</p>
+                                <p> {{f.captain.last_name}}</p>
+                                <p> {{f.takeoff}}</p>
+                                <button type='submit' class='pristal-btn' name="landed" id="pristal-btn"
+                                    value="{{f.id}}">PŘISTAL</button>
+                            </li>
                         </form>
                         {% endif %}
                         {% endfor %}
@@ -62,95 +67,102 @@
                 <button class="pridat-btn" id="pridat-btn">Přidat let +</button>
             </div>
 
-            
-            
+
+
             <div class="pridat-novy-let hidden" id="pridat-novy-let">
-            <div class="header header-novy">
-                <h1>NOVY LET</h1>
-            </div>
-
-            <form method="post">
-                {% csrf_token %}
-            <div class="content content-novy">
-                <div class="content-novy-let">
-
-                    <div class="choice">
-                    <select name="aircraft" id="aircraft">
-                        <option selected disabled hidden>Letadlo</option>
-                        {% for aircraft in aircraft_active_list %}
-                        <option value="{{aircraft.id}}" name="aircraft">{{aircraft.registration}}</option>
-                        {% endfor %}
-                    </select>
-                    </div>
-
-                    <div class="choice">
-                    <select name="student" id="student">
-                        <option selected disabled hidden>Zak</option>
-                        {% for person in person_active_list %}
-                        <option value="{{person.id}}" name="student">{{person.first_name}} {{person.last_name}}</option>
-                        {% endfor %}
-                    </select>
-                    </div>
-
-                    <div class="choice">
-                    <select name="capitan" id="capitan">
-                        <option selected disabled hidden>Kapitan</option>
-                        {% for person in person_active_list %}
-                        <option value="{{person.id}}" name="capitan">{{person.first_name}} {{person.last_name}}</option>
-                        {% endfor %}
-                    </select>
-                    </div>
-
-                    <a class='vlecna-btn' id="vlecna">+V</a>
-
-                    
+                <div class="header header-novy">
+                    <h1>NOVY LET</h1>
                 </div>
-                
-                <div class="vlecna-let vlecna-hidden" id="vlecna-let">
-                    <div class="choice">
-                        <select name="aircraft_bow" id="aircraft_bow">
-                            <option selected disabled hidden>Letadlo</option>
-                            {% for aircraft in aircraft_active_list %}
-                            <option value="{{aircraft.id}}" name="aircraft_bow">{{aircraft.registration}}</option>
-                            {% endfor %}
-                        </select>
-                        </div>
-                    
-                        <div class="choice">
-                        <select name="capitan_bow" id="capitan_bow">
-                            <option selected disabled hidden>Kapitan</option>
-                            {% for person in person_active_list %}
-                            <option value="{{person.id}}" name="capitan_bow">{{person.first_name}} {{person.last_name}}</option>
-                            {% endfor %}
-                        </select>
-                        </div>
-                        
-                        <a class='vlecna-btn vlecna-smazat' id="vlecna-smazat">-</a>
-                        
-                        <div class="choice hidden">
-                        <select name="no" id="no">
-                            <option selected disabled hidden>For syling</option>
-                        </select>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="content content-novy">
+                        <div class="content-novy-let">
+
+                            <div class="choice">
+                                <select name="aircraft" id="aircraft">
+                                    <option selected disabled hidden>Letadlo</option>
+                                    {% for aircraft in aircraft_active_list %}
+                                    <option value="{{aircraft.id}}" name="aircraft">{{aircraft.registration}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="choice">
+                                <select name="student" id="student">
+                                    <option selected disabled hidden>Zak</option>
+                                    {% for person in person_active_list %}
+                                    <option value="{{person.id}}" name="student">{{person.first_name}}
+                                        {{person.last_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="choice">
+                                <select name="capitan" id="capitan">
+                                    <option selected disabled hidden>Kapitan</option>
+                                    {% for person in person_active_list %}
+                                    <option value="{{person.id}}" name="capitan">{{person.first_name}}
+                                        {{person.last_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <a class='vlecna-btn' id="vlecna">+V</a>
+
+
                         </div>
 
-                </div>
-                <button type='submit' class="pridat-btn potvrdit-btn" id="potvrdit-btn" name="potvrdit_vzlet" value="potvrdit_vzlet">
-                    Potvrdit vzlet
-                </button>
-                </div>
+                        <div class="vlecna-let vlecna-hidden" id="vlecna-let">
+                            <div class="choice">
+                                <select name="aircraft_bow" id="aircraft_bow">
+                                    <option selected disabled hidden>Letadlo</option>
+                                    {% for aircraft in aircraft_active_list %}
+                                    <option value="{{aircraft.id}}" name="aircraft_bow">{{aircraft.registration}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="choice">
+                                <select name="capitan_bow" id="capitan_bow">
+                                    <option selected disabled hidden>Kapitan</option>
+                                    {% for person in person_active_list %}
+                                    <option value="{{person.id}}" name="capitan_bow">{{person.first_name}}
+                                        {{person.last_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <a class='vlecna-btn vlecna-smazat' id="vlecna-smazat">-</a>
+
+                            <div class="choice hidden">
+                                <select name="no" id="no">
+                                    <option selected disabled hidden>For syling</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <button type='submit' class="pridat-btn potvrdit-btn" id="potvrdit-btn" name="confirm_takeoff"
+                            value="confirm_takeoff">
+                            Potvrdit vzlet
+                        </button>
+                    </div>
             </div>
             </form>
         </div>
-        
-        {% endblock %}
-        
+
+        {% endblock content %}
+
+        {% endblock main_content %}
 
     </div>
 
-        
-<script src="{% static 'main/lety.js' %}"></script>
-{% block script %}
-{% endblock script %}
-    
+
+    <script src="{% static 'main/flights.js' %}"></script>
+    {% block script %}
+    {% endblock script %}
+
 </body>
+
 </html>

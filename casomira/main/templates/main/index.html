@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,22 +9,17 @@
     <link rel="stylesheet" href="{% static 'main/index.css' %}">
     <title>ZAHAJIT PROVOZ</title>
 </head>
+
 <body>
     <div class="main-window">
         <div class="casomira-logo">
             <img src="{% static 'main/logo.svg'%}" class="logo">
         </div>
-        <a href='{% url "main:zapis" %}' class="start">
+        <a href='{% url "main:entry" %}' class="start">
             ZAHAJIT PROVOZ
-        </a>   
+        </a>
     </div>
 
 </body>
+
 </html>
-
-
-
-
-
-
-
