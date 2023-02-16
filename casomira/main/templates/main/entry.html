@@ -1,0 +1,119 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="{% static 'main/entry.css' %}">
+</head>
+
+<body >
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <div class="navbar">
+        <div class="casomira-logo">
+            <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
+        </div>
+    </div>
+
+    <div class="main-window">
+        <div class="header">
+            <h1>ZAPIS DO PROVOZU</h1>
+        </div>
+
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="vyber-container" id="app" >
+                <div class="person-container">                   
+                    <div class="choice-header" id="choice-header" @click="toggleShowPeople">VÝBĚR OSOB</div>
+                    <div v-show="showPeople">
+                        {% if person_list %}
+                        {% for person in person_list %}
+                        <div class="choice-container">
+                            <input type="checkbox" value="{{person.id}}" name="person_choosen" id="person:{{person.id}}"
+                                class="person">
+                            <label for='person'>{{person.first_name}} {{person.last_name}}</label>
+                            <hr>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <h2>No people are available</h2>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="aircraft-container">
+                    <div class="choice-header" id="choice-header" @click="toggleShowAircrafts">VÝBĚR LETADEL</div>
+                    <div v-show="showAircrafts">
+                    {% if aircraft_list %}
+                    {% for aircraft in aircraft_list %}
+                    <div class="choice-container">
+
+                        <input type="checkbox" value="{{aircraft.id}}" id="aircraft:{{aircraft.id}}"
+                            name="aircraft_choosen" class="aircraft">
+                        <label for="aircraft">{{aircraft.registration}}</label>
+                        <hr>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <h2>No aircrafts are available</h2>
+                    {% endif %}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="error-container">
+                <p class="error" id="error">Je nutne vybrat alespon 1 letadlo a 2 osoby</p>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn-zapis" id="zapis-btn" name="confirm_entry" value="confirm_entry">
+                    Potvrdit zapis
+                </button>
+            </div>
+        </form>
+
+
+
+    </div>
+    <script>
+        const { createApp } = Vue
+        createApp({
+            delimiters: ['[[', ']]'],
+            data() {
+            return {
+              message: 'Hello Vue!',
+              showPeople: false,
+              showAircrafts: false
+            }
+          },
+            methods:{
+                toggleShowAircrafts(){
+                    this.showAircrafts = !this.showAircrafts
+                },
+                toggleShowPeople(){
+                    this.showPeople = !this.showPeople
+                },
+            }
+        }).mount('#app')
+      </script>
+
+    <script src="{% static 'main/entry.js' %}"></script>
+</body>
+
+</html>

@@ -1,20 +1,31 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Person, Aircraft, Flight
+from main.models import Person, Aircraft, Flight
 from django.shortcuts import redirect
 from datetime import datetime, timezone, timedelta
 from datetime import date
 from .forms import FlightForm
-import xlwt
-
+import csv
 
 def index(request):
     return render(request, "main/index.html")
 
 
 def entry(request):
+    #request only the needed values .values('active', 'name', 'id')
     person_list = Person.objects.order_by("id")
     aircraft_list = Aircraft.objects.order_by("id")
+    #[a for a in aircraft_list if a.active]
+    #check if there is no valid entry yet 
+    people_active = Person.objects.filter(active=True).exists()
+    aircrafts_active = Aircraft.objects.filter(active=True).exists()
+    #.values('active', 'name')
+    #count()
+    if people_active or aircrafts_active:
+        return HttpResponseRedirect("flights")
+
+
+    
     context = {
         "person_list": person_list,
         "aircraft_list": aircraft_list,
@@ -24,14 +35,15 @@ def entry(request):
         person_choosen = request.POST.getlist("person_choosen")
         aircraft_choosen = request.POST.getlist("aircraft_choosen")
 
+    #Person.object.filter(id__in=person_list).update(active=True)
         for person_ch in person_choosen:
             person = Person.objects.get(id=int(person_ch))
-            person.active = "True"
+            person.active = True
             person.save()
 
         for aircraft_ch in aircraft_choosen:
             aircraft = Aircraft.objects.get(id=int(aircraft_ch))
-            aircraft.active = "True"
+            aircraft.active = True
             aircraft.save()
         return redirect("main:flights")
 
@@ -39,8 +51,15 @@ def entry(request):
 
 
 def flights(request):
+    #Check if there is an active running entry, if not, redirect to the start entry page 
+    people_active = Person.objects.filter(active=True)
+    aircrafts_active = Aircraft.objects.filter(active=True)
+    if len(people_active) == 0 or len(aircrafts_active) == 0:
+        return HttpResponseRedirect("entry")
+
 
     flights_list = Flight.objects.order_by("takeoff")
+    flights_not_landed = Flight.objects.filter(landing__isnull = True)
 
     person_active_list = Person.objects.order_by("id").filter(active=True)
     aircraft_active_list = Aircraft.objects.order_by("id").filter(active=True)
@@ -49,6 +68,7 @@ def flights(request):
         "flights_list": flights_list,
         "person_active_list": person_active_list,
         "aircraft_active_list": aircraft_active_list,
+        "flights_not_landed": flights_not_landed,
     }
 
     if request.method == "POST" and "confirm_takeoff" in request.POST:
@@ -120,36 +140,26 @@ def finished_flights_update(request, id):
 
 def end_day(request):
     if request.method == "POST":
-        response = HttpResponse(content_type="application/ms-excel")
-        response["Content-Disposition"] = 'attachment; filename="users.xls"'
-
-        wb = xlwt.Workbook(encoding="utf-8")
-        ws = wb.add_sheet("Flights")  # this will make a sheet named Flights
-
-        # Sheet header, first row
-        row_num = 0
-
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-
-        columns = ["Takeoff", "Landing", "Zak", "Kapitan"]
-
-        for col_num in range(len(columns)):
-            ws.write(
-                row_num, col_num, columns[col_num], font_style
-            )  # at 0 row 0 column
-
-        # Sheet body, remaining rows
-        font_style = xlwt.XFStyle()
-
-        rows = Flight.objects.all().values_list(
-            "takeoff", "landing", "student_id", "captain_id"
-        )
-        for row in rows:
-            row_num += 1
-            for col_num in range(len(row)):
-                ws.write(row_num, col_num, row[col_num], font_style)
-
-        wb.save(response)
-        return response
+        #first we ckeck if all the flights are finished
+        flights_not_landed = Flight.objects.filter(landing__isnull = True)
+        if flights_not_landed:
+            print("You can't finish the day, there are still some aircrafts in the sky")
+        else:
+            #if all the flights are finished we deactivate people and aircrafts
+            people = Person.objects.all()
+            aircrafts = Aircraft.objects.all()
+            for p in people:
+                p.active = "False"
+                p.save()
+            for a in aircrafts:
+                a.active = "False"
+                a.save()
+            return redirect("/main/")
+            #and we create a csv file based on the flights
     return render(request, "main/end_day.html")
+
+
+#Additional funcsions
+
+def csv_end_day():
+    pass

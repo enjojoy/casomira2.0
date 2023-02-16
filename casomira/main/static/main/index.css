@@ -1,13 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 *{
     box-sizing: border-box;
     overflow: hidden;
 }
 
 body{
-    background-color: #f6fbff;
-    font-family: Comfortaa;
+    background-color:  #F5F5F5;;
+    font-family: Roboto;
     color: white;
     display: flex;
     flex-direction: column;
@@ -37,12 +36,12 @@ body{
     cursor: pointer;
     background-color: #f7931e;
     border: none;
-    height: 100px;
-    width: 400px;
+    height: 80px;
+    width: 350px;
     border-radius: 25px;
 
     color: white;
-    font-family: Comfortaa;
+    font-family: Roboto;
     font-size: 36px;
     font-weight: bold;
     text-decoration: none;
@@ -54,8 +53,8 @@ body{
 }
 
 .casomira-logo{
-    width: 460px;
-    height: 100px;
+    width: 690px;
+    /* height: 100px; */
     margin-bottom: 130px;
 }
 

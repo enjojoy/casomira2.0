@@ -47,21 +47,26 @@
                             <p>Čas vzletů</p>
                             <a class='pristal-btn deactivate-btn' href="#"></a>
                         </li>
-                        {% for f in flights_list %}
-                        {% if f.landing == null and f.takeoff != null %}
-                        <form method="post">
-                            {% csrf_token %}
-                            <li class="let-aktivni">
-                                <p>{{f.aircraft}}</p>
-                                <p> {{f.student.last_name}}</p>
-                                <p> {{f.captain.last_name}}</p>
-                                <p> {{f.takeoff}}</p>
-                                <button type='submit' class='pristal-btn' name="landed" id="pristal-btn"
-                                    value="{{f.id}}">PŘISTAL</button>
-                            </li>
-                        </form>
-                        {% endif %}
-                        {% endfor %}
+                            {% if flights_not_landed %}
+                                {% for f in flights_not_landed %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <li class="let-aktivni">
+                                        <p>{{f.aircraft}}</p>
+                                        <p> {{f.student.last_name}}</p>
+                                        <p> {{f.captain.last_name}}</p>
+                                        <p> {{f.takeoff}}</p>
+                                        <button type='submit' class='pristal-btn' name="landed" id="pristal-btn"
+                                            value="{{f.id}}">PŘISTAL</button>
+                                    </li>
+                                </form>
+                                {% endfor %}
+                            {% else %}
+                                <div class="no-flights">
+                                    <p>Žádné lety k zobrazení</p>
+                                </div>
+                            {% endif %}
+
                     </ul>
                 </div>
                 <button class="pridat-btn" id="pridat-btn">Přidat let +</button>

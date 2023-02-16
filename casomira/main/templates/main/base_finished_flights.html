@@ -1,0 +1,45 @@
+{% extends "./base.html" %}
+
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'main/finished_flights.css' %}">{% endblock style %}
+
+{% block name %}UKONČENÉ LETY{% endblock name %}
+
+{% block content %}
+<ul class="list-aktivni list-header">
+    <li class="let-aktivni let-header">
+        <p>Letadlo</p>
+        <p>Žák</p>
+        <p>Kapitán</p>
+        <p>Čas vzletů</p>
+        <p>Čas přistání</p>
+        <button class="edit-flight disabled" disabled>Edit</button>
+    </li>
+    {% for f in flights_list %}
+    <li class="let-aktivni" id="flight" value="{{f.id}}">
+        <p>{{f.aircraft}}</p>
+        <p> {{f.student.last_name}}</p>
+        <p> {{f.captain.last_name}}</p>
+        <p> {{f.takeoff.time}}</p>
+        <p> {{f.landing.time}}</p>
+        <p> {{f.duration}}</p>
+
+        <a class="edit-flight" id="edit-flight" href="flights/{{f.id}}/edit">Edit</a>
+    </li>
+
+    {% endfor %}
+</ul>
+
+
+{% block update %}
+{% endblock update %}
+
+
+
+{% endblock content%}
+
+{% block script %}
+<script src="{% static 'main/finished_flights.js' %}"></script>
+{% endblock script %}
