@@ -91,7 +91,7 @@ def flights(request):
 
 
 def finished_flights(request):
-    flights_list = Flight.objects.filter(landing_isnull = False).order_by("-takeoff")
+    flights_list = Flight.objects.filter(landing__isnull = False).order_by("-takeoff")
 
     context = {
         "flights_list": flights_list,

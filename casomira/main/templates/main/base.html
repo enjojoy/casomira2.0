@@ -13,6 +13,7 @@
 </head>
 
 <body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
     <!-- <div class="navbar">
         <div class="casomira-logo">
@@ -20,7 +21,7 @@
         </div>
     </div> -->
 
-    <div class="main-container">
+    <div class="main-container" id="app_flights">
 
         <div class="sidebar">
             <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
@@ -69,12 +70,12 @@
 
                     </ul>
                 </div>
-                <button class="pridat-btn" id="pridat-btn">Přidat let +</button>
+                <button @click="toggleNewFlight" class="pridat-btn" id="pridat-btn">Přidat let +</button>
             </div>
 
 
 
-            <div class="pridat-novy-let hidden" id="pridat-novy-let">
+            <div v-show ="showNewFlight" class="pridat-novy-let " id="pridat-novy-let">
                 <div class="header header-novy">
                     <h1>NOVY LET</h1>
                 </div>
@@ -113,12 +114,12 @@
                                 </select>
                             </div>
 
-                            <a class='vlecna-btn' id="vlecna">+V</a>
+                            <a @click="toggleNewBowFlight" class='vlecna-btn' id="vlecna">+V</a>
 
 
                         </div>
 
-                        <div class="vlecna-let vlecna-hidden" id="vlecna-let">
+                        <div v-show="showNewBowFlight" class="vlecna-let" id="vlecna-let">
                             <div class="choice">
                                 <select name="aircraft_bow" id="aircraft_bow">
                                     <option selected disabled hidden>Letadlo</option>
@@ -163,6 +164,27 @@
 
     </div>
 
+    <script>
+        const app = Vue.createApp({
+            data(){
+                return{
+                    showNewFlight: false,
+                    showNewBowFlight: false,
+                }
+            }, 
+            methods: {
+                toggleNewFlight(){
+                    console.log("Hi")
+                    this.showNewFlight = !this.showNewFlight;
+                    console.log(this.showNewFlight)
+                },
+                toggleNewBowFlight(){
+                    this.showNewBowFlight = !this.showNewBowFlight;
+                }
+            }
+        })
+        const moundetApp = app.mount("#app_flights")
+    </script>
 
     <script src="{% static 'main/flights.js' %}"></script>
     {% block script %}

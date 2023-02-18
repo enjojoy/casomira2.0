@@ -255,14 +255,8 @@ select{
 
 }
 
-.vlecna-hidden{
-    background-color: black;
-    position: absolute;
-    opacity: 0;
-    bottom: 0;
-}
 
-.vlecna-hidden .choice{
+.choice{
     pointer-events: none;
 }
 
