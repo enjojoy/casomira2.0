@@ -53,7 +53,7 @@ h1{
     height: 50%;
     display: flex;
     align-items: stretch;
-    justify-content: space-between;
+    justify-content: space-around;
     align-content: center;
 }
 
@@ -64,7 +64,7 @@ select{
 
 .choice-header{
     background-color: #FFFFFF;
-
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: left;
@@ -78,6 +78,18 @@ select{
 
     border: #AAAAAA solid;
 
+}
+
+.choice-header:hover{
+    background-color: #F0F0F0;
+}
+
+label{
+    margin-left: 5px;
+}
+
+input{
+    cursor: pointer;
 }
 
 .person-container, 
@@ -95,12 +107,32 @@ select{
 hr{
     margin: 0;
 }
+/* dropdown: position absolute, flex wrap, maerilase framework, vuelify, tailwind/tailwind ui */
 
 .choice-container{
-    background-color: #f6fbff;
-    padding: 4px;
-
+    background-color: #ffffff;
+    padding-left: 5px;
+    padding-top: 5px;
 }
+
+.choice-container:hover{
+    background-color: #F0F0F0;
+}
+
+.dropdown-container{
+    height: inherit;
+    width: 250px;
+}
+
+.dropdown{
+    position: absolute;
+    overflow: auto;
+    height: 180px;
+    background-color: #FFFFFF;
+    width: inherit;
+    flex-wrap: wrap;
+}
+
 
 .btn-default{
     width:200px;
@@ -148,7 +180,6 @@ img.logo{
     border-radius: 10px;
 }
 
-/* dropdown: position absolute, flex wrap, maerilase framework, vuelify, tailwind */
 
 .error-container{
     width: 100%;
@@ -158,13 +189,6 @@ img.logo{
     color: #FE1E1E;
 }
 
-.error{
-    opacity: 0;
-}
-
-.error.active{
-    opacity: 1;
-}
 
 
 

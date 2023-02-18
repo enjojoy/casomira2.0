@@ -12,19 +12,16 @@ def index(request):
 
 
 def entry(request):
-    #request only the needed values .values('active', 'name', 'id')
-    person_list = Person.objects.order_by("id")
-    aircraft_list = Aircraft.objects.order_by("id")
-    #[a for a in aircraft_list if a.active]
     #check if there is no valid entry yet 
-    people_active = Person.objects.filter(active=True).exists()
-    aircrafts_active = Aircraft.objects.filter(active=True).exists()
-    #.values('active', 'name')
-    #count()
+    #request only the needed values .values('active', 'name', 'id')
+    people_active = Person.objects.values_list("active").filter(active = True)
+    aircrafts_active = Aircraft.objects.values_list("active").filter(active = True)
+
     if people_active or aircrafts_active:
         return HttpResponseRedirect("flights")
 
-
+    person_list = Person.objects.values("id", "first_name", "last_name").order_by("id")
+    aircraft_list = Aircraft.objects.values("id", "registration").order_by("id")
     
     context = {
         "person_list": person_list,
@@ -36,78 +33,65 @@ def entry(request):
         aircraft_choosen = request.POST.getlist("aircraft_choosen")
 
     #Person.object.filter(id__in=person_list).update(active=True)
-        for person_ch in person_choosen:
-            person = Person.objects.get(id=int(person_ch))
-            person.active = True
-            person.save()
+        Person.objects.filter(id__in=person_choosen).update(active=True)
+        Aircraft.objects.filter(id__in=aircraft_choosen).update(active=True)
 
-        for aircraft_ch in aircraft_choosen:
-            aircraft = Aircraft.objects.get(id=int(aircraft_ch))
-            aircraft.active = True
-            aircraft.save()
         return redirect("main:flights")
 
     return render(request, "main/entry.html", context)
 
 
 def flights(request):
+
     #Check if there is an active running entry, if not, redirect to the start entry page 
-    people_active = Person.objects.filter(active=True)
-    aircrafts_active = Aircraft.objects.filter(active=True)
-    if len(people_active) == 0 or len(aircrafts_active) == 0:
+    people_active_count = Person.objects.values_list("active").filter(active = True).count()
+    aircrafts_active_count = Aircraft.objects.values_list("active").filter(active = True).count()
+    if people_active_count == 0 or aircrafts_active_count == 0:
         return HttpResponseRedirect("entry")
 
 
-    flights_list = Flight.objects.order_by("takeoff")
-    flights_not_landed = Flight.objects.filter(landing__isnull = True)
+    flights_list_landed = Flight.objects.filter(landing__isnull = False).order_by("takeoff")
+    flights_list_not_landed = Flight.objects.filter(landing__isnull = True).order_by("takeoff")
 
     person_active_list = Person.objects.order_by("id").filter(active=True)
     aircraft_active_list = Aircraft.objects.order_by("id").filter(active=True)
 
     context = {
-        "flights_list": flights_list,
+        "flights_list": flights_list_landed,
         "person_active_list": person_active_list,
         "aircraft_active_list": aircraft_active_list,
-        "flights_not_landed": flights_not_landed,
+        "flights_not_landed":  flights_list_not_landed,
     }
 
     if request.method == "POST" and "confirm_takeoff" in request.POST:
-        aircraft = request.POST.get("aircraft")
-        student = request.POST.get("student")
-        capitan = request.POST.get("capitan")
-        timestamp = datetime.now(timezone.utc)
-        # timestamp_date=datetime.today().date()
-        new_flight = Flight(
-            aircraft_id=aircraft,
-            captain_id=capitan,
-            student_id=student,
-            takeoff=timestamp,
-        )
-        new_flight.save()
 
-        aircraft_bow = request.POST.get("aircraft_bow")
-        capitan_bow = request.POST.get("capitan_bow")
-        if aircraft_bow == None:
+        Flight(
+            aircraft_id=request.POST.get("aircraft"),
+            captain_id=request.POST.get("capitan"),
+            student_id=request.POST.get("student"),
+            takeoff=datetime.now(timezone.utc),
+        ).save()
+
+        if request.POST.get("aircraft_bow") == None:
             pass
         else:
-            new_flight_bow = Flight(
-                aircraft_id=aircraft_bow, captain_id=capitan_bow, takeoff=timestamp
-            )
-            new_flight_bow.save()
+            Flight(
+                aircraft_id=request.POST.get("aircraft_bow"), 
+                captain_id= request.POST.get("capitan_bow"), 
+                takeoff=datetime.now(timezone.utc)
+            ).save()
         return redirect("main:flights")
 
     if request.method == "POST" and "landed" in request.POST:
-        flight_to_end = request.POST.get("landed")
-        flight = Flight.objects.get(id=flight_to_end)
-        timestamp1 = datetime.now(timezone.utc)
-        flight.landing = timestamp1
+        flight = Flight.objects.get(id= request.POST.get("landed"))
+        flight.landing = datetime.now(timezone.utc)
         flight.save()
 
     return render(request, "main/base.html", context)
 
 
 def finished_flights(request):
-    flights_list = Flight.objects.order_by("-takeoff").exclude(landing__isnull=True)
+    flights_list = Flight.objects.filter(landing_isnull = False).order_by("-takeoff")
 
     context = {
         "flights_list": flights_list,
@@ -119,18 +103,16 @@ def finished_flights(request):
 def finished_flights_update(request, id):
     flight = Flight.objects.get(id=id)
     form = FlightForm(instance=flight)
-    flights_list = Flight.objects.order_by("id").exclude(landing__isnull=True)
+    # flights_list = Flight.objects.order_by("id").exclude(landing__isnull=True)
     context = {
         "form": form,
-        "flights_list": flights_list,
+        # "flights_list": flights_list,
     }
 
     if request.method == "POST":
         form = FlightForm(request.POST, instance=flight)
         if form.is_valid():
-            # update the existing `Band` in the database
             form.save()
-            # redirect to the detail page of the `Band` we just updated
             return redirect("main:finished_flights")
     else:
         form = FlightForm(instance=flight)
@@ -146,14 +128,10 @@ def end_day(request):
             print("You can't finish the day, there are still some aircrafts in the sky")
         else:
             #if all the flights are finished we deactivate people and aircrafts
-            people = Person.objects.all()
-            aircrafts = Aircraft.objects.all()
-            for p in people:
-                p.active = "False"
-                p.save()
-            for a in aircrafts:
-                a.active = "False"
-                a.save()
+            people = Person.objects.filter(active = True).update(active = False)
+            aircrafts = Aircraft.objects.filter(active = True).update(active = False)
+            todays_flights = Flight.objects.filter(date = date.today())
+            csv_end_day(todays_flights)
             return redirect("/main/")
             #and we create a csv file based on the flights
     return render(request, "main/end_day.html")
@@ -161,5 +139,10 @@ def end_day(request):
 
 #Additional funcsions
 
-def csv_end_day():
-    pass
+def csv_end_day(flights):
+    with open ('first.csv', 'w', newline="") as csvfile:
+        writer = csv.writer(csvfile, delimiter=',', dialect='excel')
+        writer.writerow(["Datum", "Student", "Kapitan", "Letadlo", "Delka"])
+        for f in flights:
+            writer.writerow([f.date, f.student, f.captain, f.aircraft, f.duration ])
+    csvfile.close()
