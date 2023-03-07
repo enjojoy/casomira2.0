@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@3.1.5/dist/vuetify.min.css">
     <link rel="stylesheet" href="{% static 'main/flights.css' %}">
     {% block style %}{% endblock %}
 
@@ -14,31 +15,27 @@
 
 <body>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-    <!-- <div class="navbar">
-        <div class="casomira-logo">
-            <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
-        </div>
-    </div> -->
-
+    
+    {%block main_content%}
     <div class="main-container" id="app_flights">
-
-        <div class="sidebar">
-            <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
-            <a class="menu-btn" href='{% url "main:flights" %}'>Aktivní lety</a>
-            <a class="menu-btn" href='{% url "main:finished_flights" %}'>Ukončené lety</a>
-            <a class="menu-btn" href='{% url "main:end_day" %}'>Ukončit provoz</a>
+        <div>
+            <div class="sticky">
+                <div class="sidebar">
+                    <img src="{% static 'main/logo.svg'%}" alt="Casomira" class="logo">
+                    <a class="menu-btn" href='{% url "main:flights" %}'>Aktivní lety</a>
+                    <a class="menu-btn" href='{% url "main:finished_flights" %}'>Ukončené lety</a>
+                    <a class="menu-btn" href='{% url "main:end_day" %}'>Ukončit provoz</a>
+                </div>
+            </div>
         </div>
 
-        {%block main_content%}
 
         <div class="main-window">
             <div class="header">
-                <h1>{% block name %}AKTIVNÍ LETY{% endblock %}</h1>
+                <p>{% block name %}AKTIVNÍ LETY{% endblock %}</p>
             </div>
-
             {% block content %}
-            <div class="content">
+            <div class="content container">
                 <div class="content-aktivni-lety">
                     <ul class="list-aktivni list-header">
                         <li class="let-aktivni let-header">
@@ -72,90 +69,91 @@
                 </div>
                 <button @click="toggleNewFlight" class="pridat-btn" id="pridat-btn">Přidat let +</button>
             </div>
-
+           
 
 
             <div v-show ="showNewFlight" class="pridat-novy-let " id="pridat-novy-let">
                 <div class="header header-novy">
-                    <h1>NOVY LET</h1>
+                    <p>NOVY LET</p>
                 </div>
+                <div class="content container">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="content content-novy">
+                            <div class="content-novy-let">
 
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="content content-novy">
-                        <div class="content-novy-let">
+                                <div class="choice">
+                                    <select name="aircraft" id="aircraft">
+                                        <option selected disabled hidden>Letadlo</option>
+                                        {% for aircraft in aircraft_active_list %}
+                                        <option value="{{aircraft.id}}" name="aircraft">{{aircraft.registration}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
 
-                            <div class="choice">
-                                <select name="aircraft" id="aircraft">
-                                    <option selected disabled hidden>Letadlo</option>
-                                    {% for aircraft in aircraft_active_list %}
-                                    <option value="{{aircraft.id}}" name="aircraft">{{aircraft.registration}}</option>
-                                    {% endfor %}
-                                </select>
+                                <div class="choice">
+                                    <select name="student" id="student">
+                                        <option selected disabled hidden>Zak</option>
+                                        {% for person in person_active_list %}
+                                        <option value="{{person.id}}" name="student">{{person.first_name}}
+                                            {{person.last_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+
+                                <div class="choice">
+                                    <select name="capitan" id="capitan">
+                                        <option selected disabled hidden>Kapitan</option>
+                                        {% for person in person_active_list %}
+                                        <option value="{{person.id}}" name="capitan">{{person.first_name}}
+                                            {{person.last_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <a @click="toggleNewBowFlight" class='vlecna-btn' id="vlecna">+V</a>
+
+
                             </div>
 
-                            <div class="choice">
-                                <select name="student" id="student">
-                                    <option selected disabled hidden>Zak</option>
-                                    {% for person in person_active_list %}
-                                    <option value="{{person.id}}" name="student">{{person.first_name}}
-                                        {{person.last_name}}</option>
-                                    {% endfor %}
-                                </select>
+                            <div v-show="showNewBowFlight" class="vlecna-let" id="vlecna-let">
+                                <div class="choice">
+                                    <select name="aircraft_bow" id="aircraft_bow">
+                                        <option selected disabled hidden>Letadlo</option>
+                                        {% for aircraft in aircraft_active_list %}
+                                        <option value="{{aircraft.id}}" name="aircraft_bow">{{aircraft.registration}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="choice">
+                                    <select name="capitan_bow" id="capitan_bow">
+                                        <option >Kapitan</option>
+                                        {% for person in person_active_list %}
+                                        <option value="{{person.id}}" name="capitan_bow">{{person.first_name}}
+                                            {{person.last_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <a class='vlecna-btn vlecna-smazat' id="vlecna-smazat">-</a>
+
+                                <div class="choice hidden">
+                                    <select name="no" id="no">
+                                        <option selected disabled hidden>For syling</option>
+                                    </select>
+                                </div>
+
                             </div>
-
-                            <div class="choice">
-                                <select name="capitan" id="capitan">
-                                    <option selected disabled hidden>Kapitan</option>
-                                    {% for person in person_active_list %}
-                                    <option value="{{person.id}}" name="capitan">{{person.first_name}}
-                                        {{person.last_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <a @click="toggleNewBowFlight" class='vlecna-btn' id="vlecna">+V</a>
-
-
+                            <button type='submit' class="pridat-btn potvrdit-btn" id="potvrdit-btn" name="confirm_takeoff"
+                                value="confirm_takeoff">
+                                Potvrdit vzlet
+                            </button>
                         </div>
-
-                        <div v-show="showNewBowFlight" class="vlecna-let" id="vlecna-let">
-                            <div class="choice">
-                                <select name="aircraft_bow" id="aircraft_bow">
-                                    <option selected disabled hidden>Letadlo</option>
-                                    {% for aircraft in aircraft_active_list %}
-                                    <option value="{{aircraft.id}}" name="aircraft_bow">{{aircraft.registration}}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <div class="choice">
-                                <select name="capitan_bow" id="capitan_bow">
-                                    <option selected disabled hidden>Kapitan</option>
-                                    {% for person in person_active_list %}
-                                    <option value="{{person.id}}" name="capitan_bow">{{person.first_name}}
-                                        {{person.last_name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <a class='vlecna-btn vlecna-smazat' id="vlecna-smazat">-</a>
-
-                            <div class="choice hidden">
-                                <select name="no" id="no">
-                                    <option selected disabled hidden>For syling</option>
-                                </select>
-                            </div>
-
-                        </div>
-                        <button type='submit' class="pridat-btn potvrdit-btn" id="potvrdit-btn" name="confirm_takeoff"
-                            value="confirm_takeoff">
-                            Potvrdit vzlet
-                        </button>
-                    </div>
+                    </form>
             </div>
-            </form>
         </div>
 
         {% endblock content %}
@@ -170,13 +168,14 @@
                 return{
                     showNewFlight: false,
                     showNewBowFlight: false,
+                    aircraftInTheSky: []
                 }
             }, 
             methods: {
                 toggleNewFlight(){
                     console.log("Hi")
                     this.showNewFlight = !this.showNewFlight;
-                    console.log(this.showNewFlight)
+                    console.log(this.aircraftInTheSky)
                 },
                 toggleNewBowFlight(){
                     this.showNewBowFlight = !this.showNewBowFlight;
@@ -186,7 +185,6 @@
         const moundetApp = app.mount("#app_flights")
     </script>
 
-    <script src="{% static 'main/flights.js' %}"></script>
     {% block script %}
     {% endblock script %}
 

@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.timesince import timesince
+import math
 from django.db.models import DurationField
 
 
@@ -49,11 +49,11 @@ class Flight(models.Model):
         return f"{self.date}, {self.takeoff}, {self.landing}, {self.student}, {self.captain}, {self.aircraft}"
 
     @property
-    def duration(self):  
-        # return round((self.landing - self.takeoff).total_seconds() / 60)
+    def duration(self):
         landing = self.landing
         takeoff = self.takeoff
-        time_delta = timesince(takeoff, landing)
+        time_delta = math.ceil((landing - takeoff).total_seconds() / 60)
         return time_delta
 
     # duration = property(__duration)
+

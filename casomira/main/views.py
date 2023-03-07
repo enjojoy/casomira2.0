@@ -53,9 +53,27 @@ def flights(request):
     flights_list_landed = Flight.objects.filter(landing__isnull = False).order_by("takeoff")
     flights_list_not_landed = Flight.objects.filter(landing__isnull = True).order_by("takeoff")
 
-    person_active_list = Person.objects.order_by("id").filter(active=True)
-    aircraft_active_list = Aircraft.objects.order_by("id").filter(active=True)
+    person_active_list = Person.objects.order_by("id").filter(active=True, )
+    aircraft_active_list = Aircraft.objects.order_by("id").filter(active=True,)
 
+    aircrafts_in_the_sky = []
+
+    # for f in flights_list_not_landed:
+    #     aircrafts_in_the_sky.append(f.aircraft)
+    
+    # print(flights_list_not_landed)
+
+    # print(aircrafts_in_the_sky)
+
+    # for i in aircrafts_in_the_sky:
+    #     if i in flights_list_not_landed.aircraft:
+    #         print('Yes')
+    #     else: 
+    #         print('No')
+            
+
+   
+    print (flights_list_not_landed)
     context = {
         "flights_list": flights_list_landed,
         "person_active_list": person_active_list,
@@ -126,6 +144,7 @@ def end_day(request):
         flights_not_landed = Flight.objects.filter(landing__isnull = True)
         if flights_not_landed:
             print("You can't finish the day, there are still some aircrafts in the sky")
+            
         else:
             #if all the flights are finished we deactivate people and aircrafts
             people = Person.objects.filter(active = True).update(active = False)
@@ -142,7 +161,7 @@ def end_day(request):
 def csv_end_day(flights):
     with open ('first.csv', 'w', newline="") as csvfile:
         writer = csv.writer(csvfile, delimiter=',', dialect='excel')
-        writer.writerow(["Datum", "Student", "Kapitan", "Letadlo", "Delka"])
+        writer.writerow(["Datum", "Student", "Kapitan", "Letadlo", "Odlet", "Pristnani", "Delka"])
         for f in flights:
-            writer.writerow([f.date, f.student, f.captain, f.aircraft, f.duration ])
+            writer.writerow([f.date, f.student, f.captain, f.aircraft, f.takeoff, f.landing, f.duration ])
     csvfile.close()
