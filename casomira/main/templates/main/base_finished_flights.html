@@ -16,6 +16,7 @@
         <p>Kapitán</p>
         <p>Čas vzletů</p>
         <p>Čas přistání</p>
+        <p>Delka létu</p>
         <button class="edit-flight disabled" disabled>Edit</button>
     </li>
     {% for f in flights_list %}
@@ -25,7 +26,7 @@
         <p> {{f.captain.last_name}}</p>
         <p> {{f.takeoff.time}}</p>
         <p> {{f.landing.time}}</p>
-        <p> {{f.duration}}</p>
+        <p> {{f.duration}} min.</p>
 
         <a class="edit-flight" id="edit-flight" href="flights/{{f.id}}/edit">Edit</a>
     </li>

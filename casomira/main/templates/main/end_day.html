@@ -9,10 +9,16 @@
             <p>UKONCIT PROVOZ</p>
         </div>
         <p>OPRAVDU CHCETE UKONCIT PROVOZ?</p>
+        {% if messages %}
+            {% for f in messages %}
+                <div>  {{ f }} </div>
+            {% endfor %}
+        {% endif %}
         <div class="two_buttons">
             <form method="post">
                 {% csrf_token %}
                 <button type='submit' class='ukoncit_btn ukoncit_btn_ukoncit' name="ukoncit" id="ukoncit-btn">Ukoncit provoz</button>
+                <button type='submit' class='ukoncit_btn ukoncit_btn_ukoncit' name="stahnout" id="ukoncit-btn">Stahnout prilohu</button>
             </form>
             <button type="button" onclick="javascript:history.back()" class="ukoncit_btn ukoncit_btn_vratit">Vratit se zpet</button>
 

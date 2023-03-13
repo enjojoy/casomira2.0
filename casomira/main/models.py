@@ -11,6 +11,7 @@ class Person(models.Model):
     last_name = models.CharField(max_length=200, null=True)
     nickname = models.CharField(max_length=200, null=True)
     active = models.BooleanField(default=False)
+    in_the_sky = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.first_name} {self.nickname} {self.last_name}"
@@ -20,6 +21,7 @@ class Aircraft(models.Model):
     aircraft_type = models.CharField(max_length=60)
     registration = models.CharField(max_length=15)
     active = models.BooleanField(default=False)
+    in_the_sky = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.aircraft_type}, {self.registration}"
